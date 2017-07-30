@@ -20,7 +20,7 @@ public class TcpServer implements Runnable{
     int port = 8080;
     public static int i = 0;
 
-    private void start() throws Exception{
+    public void start() throws Exception{
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
