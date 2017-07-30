@@ -12,7 +12,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 /**
  * Created by zsj on 2017/7/30.
  */
-public class TcpClient {
+public class TcpClient implements Runnable {
 
     String host =  "127.0.0.1";
     int port =  8080;
@@ -28,7 +28,7 @@ public class TcpClient {
                 true).handler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel socketChannel) throws Exception {
-                    socketChannel.pipeline().addLast(new ClientHandler());
+                    socketChannel.pipeline().addLast(new ClientWriteHandler());
             }
         });
 
@@ -46,6 +46,15 @@ public class TcpClient {
     public static void main(String[] args) {
         try {
             new TcpClient().connect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run() {
+        try {
+            this.connect();
         } catch (Exception e) {
             e.printStackTrace();
         }

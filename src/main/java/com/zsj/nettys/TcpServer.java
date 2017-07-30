@@ -15,11 +15,12 @@ import org.springframework.stereotype.Service;
  * Netty启动tcpServer
  */
 @Service
-public class TcpServer {
+public class TcpServer implements Runnable{
 
     int port = 8080;
+    public static int i = 0;
 
-    private void run() throws Exception{
+    private void start() throws Exception{
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -31,13 +32,16 @@ public class TcpServer {
             @Override
             protected void initChannel(SocketChannel socketChannel) throws Exception {
                     //当接收到新连接的时候，这个方法会调用
-                System.out.println("server--接收到1个连接");
+                i++;
+                System.out.println("server--接收到"+i+"个连接");
                 socketChannel.pipeline().addLast(new MyServerHandler());
             }
         });
 
         //绑定端口，通过阻塞等待操作完成，返回一个channelFuture，用于异步操作的通知回调。
         ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
+
+        System.out.println("TcpServer启动成功");
 
         //通过阻塞关闭，服务端关闭后main主线程才结束。
         channelFuture.channel().closeFuture().sync();
@@ -50,10 +54,18 @@ public class TcpServer {
 
     public static void main(String[] args) {
         try {
-            new TcpServer().run();
+            new TcpServer().start();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    @Override
+    public void run() {
+        try {
+            this.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

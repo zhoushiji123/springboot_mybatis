@@ -28,7 +28,8 @@ public class MyServerHandler extends ChannelHandlerAdapter {
 
         //往客户端返回消息
         String sendBack = "client--从服务端成功接收消息 : "+ DateUtil.getCurrentTime();
-        ByteBuf backBuf = Unpooled.copiedBuffer(sendBack.getBytes());
+        ByteBuf backBuf = Unpooled.buffer(sendBack.getBytes().length);
+        backBuf.writeBytes(sendBack.getBytes());
         //backBuf.writeBytes(sendBack.getBytes());
         ctx.writeAndFlush(backBuf);
     }
